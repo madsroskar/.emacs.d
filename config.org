@@ -1,0 +1,60 @@
+#+TITLE: Mads' Doom Emacs setup
+#+EXPORT_FILE_NAME: README
+
+While working on figuring out my own doom emacs setup, figuring out how elisp works,
+and at the same time trying to figure out a little bit of org-mode as I go, I figured
+I might as well try to document things a bit as I go.
+
+Who I am:
+#+BEGIN_SRC elisp
+(setq user-full-name "Mads Røskar"
+      user-mail-address "madshvero@gmail.com")
+
+#+end_SRC
+
+Trick I was taught by @davazp in order to be able to type my name in emacs as =M-o=
+on a US International keyboard is caught by an emacs binding, as well as being
+one of our [[yt:https://www.youtube.com/watch?v=f488uJAQgmw][glorious scandinavian letters]]:
+
+#+BEGIN_EXAMPLE
+C-x RET C-\ norwegian-keyboard RET
+#+END_EXAMPLE
+
+#+RESULTS:
+
+* Theme / looks
+For most applications I am able to, I've set Dracula as the theme, as
+it looks nice, and has packages for a whole lot of applications
+
+#+BEGIN_SRC elisp
+(setq doom-theme 'doom-dracula)
+#+END_SRC
+
+For now, I keep my org directory in the standard =~/org/= directory,
+but I'll keep the setting here still to make it easier to switch.
+
+#+BEGIN_SRC elisp
+(setq org-directory "~/org/")
+#+END_SRC
+
+I tried having a transparent background for my frame, but it seemed
+like macOS wasn't all that much into it
+#+begin_src elisp
+;;(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+;;(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
+#+end_src
+
+
+#+begin_src elisp
+(add-to-list 'default-frame-alist '(background-color . "#1d1f21"))
+
+(setq doom-font (font-spec :family "Hack Nerd Font" :size 16)
+      doom-big-font (font-spec :family "Hack Nerd Font" :size 35))
+#+end_src
+
+Trying to get Projectile to get projects from my default search path,
+but with varying luck
+#+begin_src elisp
+(setq projectile-project-search-path '("~/code"))
+#+end_src
+* [[file:packages.org][Packages]]
