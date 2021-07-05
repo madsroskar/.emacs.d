@@ -8,9 +8,12 @@ I might as well try to document things a bit as I go.
 Who I am:
 #+BEGIN_SRC elisp
 (setq user-full-name "Mads Røskar"
-      user-mail-address "madshvero@gmail.com")
+      user-mail-address "banana@gmail.com")
 
 #+end_SRC
+
+#+RESULTS:
+: madshvero@gmail.com
 
 Trick I was taught by @davazp in order to be able to type my name in emacs as =M-o=
 on a US International keyboard is caught by an emacs binding, as well as being
@@ -56,5 +59,48 @@ Trying to get Projectile to get projects from my default search path,
 but with varying luck
 #+begin_src elisp
 (setq projectile-project-search-path '("~/code"))
+#+end_src
+
+Don't need to set the title for xterm, I'm not fussy
+#+begin_src elisp
+(after! xterm
+  (setq xterm-set-window-title nil))
+#+end_src
+
+Show the time and battery status in the modeline
+#+begin_src elisp
+(display-time-mode 1)
+(unless (string-match-p "^Power N/A" (battery))
+  (display-battery-mode 1))
+#+end_src
+
+
+#+begin_src elisp
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string
+              ".*/[0-9]*-?" "☰ "
+              (subst-char-in-string ?_ ?  buffer-file-name))
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+#+end_src
+
+#+begin_src elisp
+(setq org-agenda-files '("~/org"))
+#+end_src
+
+#+begin_src elisp
+(setq
+    org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
+)
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+
 #+end_src
 * [[file:packages.org][Packages]]

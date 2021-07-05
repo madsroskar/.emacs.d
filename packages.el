@@ -49,7 +49,7 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 ;
-
+(package! graphql-mode)
 (use-package lsp-mode
   :hook (web-mode . lsp)
   :custom

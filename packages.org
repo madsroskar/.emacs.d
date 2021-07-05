@@ -1,0 +1,20 @@
+#+TITLE: Packages
+
+This file should hold all packages I add on top of Doom emacs.
+
+* TODO Move in packages from custom
+
+I'm not entirely sure what these do yet
+#+begin_src elisp
+;; -*- no-byte-compile: t; -*-
+;;; $DOOMDIR/packages.el
+#+end_src
+
+As I'm currently on a project where most of the code base is in typescript,
+I'm including a typescript language server to use with the lsp.
+#+begin_src elisp
+(use-package lsp-mode
+  :hook (web-mode . lsp)
+  :custom
+  (lsp-clients-typescript-server-args '("--stdio" "--tsserver-log-file" "/dev/stderr")))
+#+end_src
