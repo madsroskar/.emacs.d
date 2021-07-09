@@ -101,6 +101,12 @@ Show the time and battery status in the modeline
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize))
+#+end_src
+
+For the following see [[https://github.com/hlissner/doom-emacs/issues/77][this link]]
+#+begin_src elisp
+(setq company-idle-delay 0.2
+      company-minimum-prefix-length 3)
 
 #+end_src
 * [[file:packages.org][Packages]]
