@@ -1,20 +1,111 @@
 #+TITLE: Mads' Doom Emacs setup
 #+EXPORT_FILE_NAME: README
+#+STARTUP: overview
+#+PROPERTY: header-args :results silent
 
 While working on figuring out my own doom emacs setup, figuring out how elisp works,
 and at the same time trying to figure out a little bit of org-mode as I go, I figured
 I might as well try to document things a bit as I go.
 
-Who I am:
+* UI
+For most applications I am able to, I've set Dracula as the theme, as
+it looks nice, and has packages for a whole lot of applications
+** Theme
+I plan to make my own theme package at some point™ to learn how that's done. For now though I just use a built-in Doom theme
+#+BEGIN_SRC elisp
+(setq doom-theme 'doom-tomorrow-night)
+#+END_SRC
+
+
+** font
+#+begin_src elisp
+(setq doom-font (font-spec :family "Hack Nerd Font" :size 16)
+      doom-big-font (font-spec :family "Hack Nerd Font" :size 35))
+#+end_src
+
+
+
+** Modeline
+*** Show the time and battery status in the modeline
+#+begin_src elisp
+;; (display-time-mode 1)
+;; (unless (string-match-p "^Power N/A" (battery))
+;;   (display-battery-mode 1))
+#+end_src
+** Frame
+*** Set the style of the frame title
+#+begin_src elisp
+(setq frame-title-format
+      '(""
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+#+end_src
+*** Add a transparent background
+I tried having a transparent background for my frame, but it seemed
+like macOS wasn't all that much into it
+#+begin_src elisp
+;;(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+;;(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
+#+end_src
+*** Set the frame background color
+#+begin_src elisp
+(add-to-list 'default-frame-alist '(background-color . "#1d1f21"))
+#+end_src
+
+**
+
+* Notes
+** Org-mode
+*** Base org-mode directories
+**** Base
+#+BEGIN_SRC elisp
+(setq org-directory "~/org/")
+#+END_SRC
+**** Agenda
+#+begin_src elisp
+;; (setq org-agenda-files '("~/org" "~/work/")) ;
+#+end_src
+*** Looks
+Headline bullets
+#+begin_src elisp
+(setq
+    org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
+)
+#+end_src
+Line modes
+#+begin_src elisp
+(add-hook! org-mode :append
+           #'visual-line-mode
+           #'variable-pitch-mode)
+#+end_src
+*** Content
+**** TODO Paste images (org-download-clipboard)
+*** Keybinds
+**** shiftmetaright
+#+begin_src elisp
+(map! :map org-mode-map
+      :after org
+      :n "M-l" #'org-shiftmetaright)
+#+end_src
+
+* Projects / workspaces
+** Project management with projectile
+Trying to get Projectile to get projects from my default search path,
+but with varying luck
+#+begin_src elisp
+(setq projectile-project-search-path '("~/code"))
+#+end_src
+
+* Meta
+** Me
 #+BEGIN_SRC elisp
 (setq user-full-name "Mads Røskar"
-      user-mail-address "banana@gmail.com")
+      user-mail-address "madshvero@gmail.com")
 
 #+end_SRC
-
-#+RESULTS:
-: madshvero@gmail.com
-
+** Typing with norwegian characters in Emacs
 Trick I was taught by @davazp in order to be able to type my name in emacs as =M-o=
 on a US International keyboard is caught by an emacs binding, as well as being
 one of our [[yt:https://www.youtube.com/watch?v=f488uJAQgmw][glorious scandinavian letters]]:
@@ -23,90 +114,54 @@ one of our [[yt:https://www.youtube.com/watch?v=f488uJAQgmw][glorious scandinavi
 C-x RET C-\ norwegian-keyboard RET
 #+END_EXAMPLE
 
-#+RESULTS:
-
-* Theme / looks
-For most applications I am able to, I've set Dracula as the theme, as
-it looks nice, and has packages for a whole lot of applications
-
-#+BEGIN_SRC elisp
-(setq doom-theme 'doom-dracula)
-#+END_SRC
-
-For now, I keep my org directory in the standard =~/org/= directory,
-but I'll keep the setting here still to make it easier to switch.
-
-#+BEGIN_SRC elisp
-(setq org-directory "~/org/")
-#+END_SRC
-
-I tried having a transparent background for my frame, but it seemed
-like macOS wasn't all that much into it
+* Languages
+** TypeScript
+*** Deno
+**** Set up formatting for deno-related files
+Adding hook for [[https://github.com/rclarey/deno-emacs][deno-fmt]]
 #+begin_src elisp
-;;(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-;;(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
+(add-hook 'typescript-mode-hook 'deno-fmt-mode)
+(add-hook 'js2-mode-hook 'deno-fmt-mode)
 #+end_src
 
-
+* System
+** Common
+*** Get PATH from the shell used for the system
 #+begin_src elisp
-(add-to-list 'default-frame-alist '(background-color . "#1d1f21"))
-
-(setq doom-font (font-spec :family "Hack Nerd Font" :size 16)
-      doom-big-font (font-spec :family "Hack Nerd Font" :size 35))
-#+end_src
-
-Trying to get Projectile to get projects from my default search path,
-but with varying luck
-#+begin_src elisp
-(setq projectile-project-search-path '("~/code"))
-#+end_src
-
-Don't need to set the title for xterm, I'm not fussy
-#+begin_src elisp
-(after! xterm
-  (setq xterm-set-window-title nil))
-#+end_src
-
-Show the time and battery status in the modeline
-#+begin_src elisp
-(display-time-mode 1)
-(unless (string-match-p "^Power N/A" (battery))
-  (display-battery-mode 1))
-#+end_src
-
-
-#+begin_src elisp
-(setq frame-title-format
-      '(""
-        (:eval
-         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-             (replace-regexp-in-string
-              ".*/[0-9]*-?" "☰ "
-              (subst-char-in-string ?_ ?  buffer-file-name))
-           "%b"))
-        (:eval
-         (let ((project-name (projectile-project-name)))
-           (unless (string= "-" project-name)
-             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
-#+end_src
-
-#+begin_src elisp
-(setq org-agenda-files '("~/org"))
-#+end_src
-
-#+begin_src elisp
-(setq
-    org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
-)
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize))
 #+end_src
+** xterm
+*** Don't set a window title
+No reason either way for this really, just a short-term thing before I bother sorting this out
+#+begin_src elisp
+(after! xterm
+  (setq xterm-set-window-title nil))
+#+end_src
+** MacOS
+*** Use command as the Meta key
+#+begin_src elisp
+(when (eq system-type 'darwin)
+  (setq mac-option-modifier 'meta))
+(setq mac-command-modifier 'meta)
+(setq mac-pass-command-to-system nil)
+#+end_src
+*** Don't pass command to system
+#+begin_src elisp
+(when (eq system-type 'darwin)
+  (setq mac-option-modifier 'meta))
+(setq mac-command-modifier 'meta)
+(setq mac-pass-command-to-system nil)
+#+end_src
+* Snippets
+** Template files
+** General snippets
 
-For the following see [[https://github.com/hlissner/doom-emacs/issues/77][this link]]
+* [[file:packages.org][Packages]]
+
+** Company
 #+begin_src elisp
 (setq company-idle-delay 0.2
       company-minimum-prefix-length 3)
-
 #+end_src
-* [[file:packages.org][Packages]]

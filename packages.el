@@ -50,7 +50,6 @@
 ;(unpin! t)
 ;
 (package! graphql-mode)
-(use-package lsp-mode
-  :hook (web-mode . lsp)
-  :custom
-  (lsp-clients-typescript-server-args '("--stdio" "--tsserver-log-file" "/dev/stderr")))
+(package! format-all)
+(package! deno-fmt)
+(package! doom-snippets :ignore t)

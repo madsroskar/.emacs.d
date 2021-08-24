@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org-file header
+# key: head
+# uuid: head# -*- mode: snippet -*-
+# --
+#+title:        ${1:untitled document}
+#+description:  ${2:no description}
+#+author:       ${3:`user-full-name`}
+#+email:        ${4:`user-mail-address`}
