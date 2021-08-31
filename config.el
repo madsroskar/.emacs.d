@@ -1,3 +1,17 @@
+(setq-default
+ ;; fill-column 120                         ; Set width for automatic line breaks
+ gc-cons-threshold (* 8 1024 1024)      ; We're not using Game Boys anymore
+ require-final-newline t
+ initial-scratch-message ""             ; Empty the initial *scratch* buffer
+ read-process-output-max (* 1024 1024)  ; Increase read size per process
+ uniquify-buffer-name-style 'forward    ; Uniquify buffer names
+ warning-minimum-level :warning)           ; Skip warning buffers
+(fset 'yes-or-no-p 'y-or-n-p)           ; Replace yes/no prompts with y/n
+(global-subword-mode 1)                 ; Iterate through CamelCase words
+(mouse-avoidance-mode 'animate)           ; Avoid collision of mouse with point
+(set-default-coding-systems 'utf-8)     ; Default to utf-8 encoding
+;; (global-auto-revert-mode t) ; sounds a bit scary tbh..
+
 (setq doom-theme 'doom-tomorrow-night)
 
 (setq doom-font (font-spec :family "Hack Nerd Font" :size 16)
@@ -19,6 +33,14 @@
 
 (add-to-list 'default-frame-alist '(background-color . "#1d1f21"))
 
+(setq org-agenda-files (list "inbox.org"))
+
+(setq org-capture-templates
+       `(("i" "Inbox" entry  (file "inbox.org")
+        ,(concat "* TODO %?\n"
+                 "/Entered on/ %U"))))
+(define-key global-map (kbd "C-c c") 'org-capture)
+
 (setq org-directory "~/org/")
 
 ;; (setq org-agenda-files '("~/org" "~/work/")) ;
@@ -27,9 +49,9 @@
     org-superstar-headline-bullets-list '("⁖" "◉" "○" "✸" "✿")
 )
 
-(add-hook! org-mode :append
-           #'visual-line-mode
-           #'variable-pitch-mode)
+;; (add-hook! org-mode :append
+;;            #'visual-line-mode
+;;            #'variable-pitch-mode)
 
 (map! :map org-mode-map
       :after org
@@ -59,6 +81,12 @@
   (setq mac-option-modifier 'meta))
 (setq mac-command-modifier 'meta)
 (setq mac-pass-command-to-system nil)
+
+(setq yas-snippet-dirs
+      '("./snippets" ;; the yasmate collection
+        ))
+
+(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
 
 (setq company-idle-delay 0.2
       company-minimum-prefix-length 3)

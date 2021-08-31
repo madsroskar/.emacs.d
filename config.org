@@ -7,6 +7,25 @@ While working on figuring out my own doom emacs setup, figuring out how elisp wo
 and at the same time trying to figure out a little bit of org-mode as I go, I figured
 I might as well try to document things a bit as I go.
 
+* Better defaults
+#+begin_src elisp
+(setq-default
+ ;; fill-column 120                         ; Set width for automatic line breaks
+ gc-cons-threshold (* 8 1024 1024)      ; We're not using Game Boys anymore
+ require-final-newline t
+ initial-scratch-message ""             ; Empty the initial *scratch* buffer
+ read-process-output-max (* 1024 1024)  ; Increase read size per process
+ uniquify-buffer-name-style 'forward    ; Uniquify buffer names
+ warning-minimum-level :warning)           ; Skip warning buffers
+(fset 'yes-or-no-p 'y-or-n-p)           ; Replace yes/no prompts with y/n
+(global-subword-mode 1)                 ; Iterate through CamelCase words
+(mouse-avoidance-mode 'animate)           ; Avoid collision of mouse with point
+(set-default-coding-systems 'utf-8)     ; Default to utf-8 encoding
+;; (global-auto-revert-mode t) ; sounds a bit scary tbh..
+
+#+end_src
+
+
 * UI
 For most applications I am able to, I've set Dracula as the theme, as
 it looks nice, and has packages for a whole lot of applications
@@ -56,6 +75,37 @@ like macOS wasn't all that much into it
 
 **
 
+* Getting 💩 done
+As this is starting with minimal understanding of the details related to GTD, using the actual name is a bit premature.
+However, adopting minimal chunks of it at the time will probably[fn:1] be more beneficial for me successfully building habits
+needed to keep this up.
+
+To start out, I will be =/(borrow|steal)ing/= some configuration from:
+- [[github:rougler/emacs-gtd][rougler on GitHub]]
+
+To summarize the basics as mentioned in his repository:
+#+begin_quote
+1. Capture anything that crosses your mind, nothing is too big or small.
+2. Clarify what you’ve captured into clear and concrete action steps.
+3. Organize and put everything into the right place.
+4. Review, update, and revise your lists.
+5. Engage Get to work on the important stuff.
+#+end_quote
+** Basic setup
+*** Set up inbox
+#+begin_src elisp
+(setq org-agenda-files (list "inbox.org"))
+#+end_src
+*** Set up simpler capture
+#+begin_src elisp
+(setq org-capture-templates
+       `(("i" "Inbox" entry  (file "inbox.org")
+        ,(concat "* TODO %?\n"
+                 "/Entered on/ %U"))))
+(define-key global-map (kbd "C-c c") 'org-capture)
+#+end_src
+
+
 * Notes
 ** Org-mode
 *** Base org-mode directories
@@ -76,9 +126,9 @@ Headline bullets
 #+end_src
 Line modes
 #+begin_src elisp
-(add-hook! org-mode :append
-           #'visual-line-mode
-           #'variable-pitch-mode)
+;; (add-hook! org-mode :append
+;;            #'visual-line-mode
+;;            #'variable-pitch-mode)
 #+end_src
 *** Content
 **** TODO Paste images (org-download-clipboard)
@@ -154,9 +204,50 @@ No reason either way for this really, just a short-term thing before I bother so
 (setq mac-command-modifier 'meta)
 (setq mac-pass-command-to-system nil)
 #+end_src
+*** Grab content from other apps
+[[https://github.com/stuartsierra/org-mode/blob/master/contrib/lisp/org-mac-link.el][org-mac-link.el]]
+
+
+[[https://github.com/stuartsierra/org-mode/blob/master/contrib/lisp/org-mac-link.el][org-mode/org-mac-link.el at master · stuartsierra/org-mode]]
+
+
 * Snippets
+** Configuration
+*** Snippet directories
+#+begin_src elisp
+(setq yas-snippet-dirs
+      '("./snippets" ;; the yasmate collection
+        ))
+
+(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
+#+end_src
+
 ** Template files
-** General snippets
+** Snippets per mode
+*** org-mode
+**** src
+#+begin_src org :tangle ./snippets/org-mode/src
+# -*- mode: snippet -*-
+# name: #+begin_src
+# uuid: src
+# key: src
+# --
+,#+begin_src $1
+$0
+,#+end_src
+#+end_src
+**** quote
+#+begin_src org :tangle ./snippets/org-mode/quote
+# -*- mode: snippet -*-
+# name: #+begin_quote
+# uuid: quote
+# key: quote
+# --
+,#+begin_quote $1
+$0
+,#+end_quote
+#+end_src
+
 
 * [[file:packages.org][Packages]]
 
@@ -165,3 +256,7 @@ No reason either way for this really, just a short-term thing before I bother so
 (setq company-idle-delay 0.2
       company-minimum-prefix-length 3)
 #+end_src
+
+* Footnotes
+
+[fn:1] In my experience, don't quote me on it

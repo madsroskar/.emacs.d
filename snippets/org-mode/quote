@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: #+begin_quote
+# uuid: quote
+# key: quote
+# --
+#+begin_quote $1
+$0
+#+end_quote
